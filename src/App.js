@@ -8,12 +8,14 @@ import {
   ListGroup,
   Badge,
 } from "react-bootstrap";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTrashAlt } from "@fortawesome/free-solid-svg-icons";
 class App extends Component {
   constructor() {
     super();
     this.state = {
       newTodo: "",
-      todos: [{ title: "Default State", done: true }],
+      todos: [{ title: "Default State", completed: true }],
     };
   }
 
@@ -26,16 +28,27 @@ class App extends Component {
   formSubmitted = (event) => {
     event.preventDefault();
     this.setState({
-      todos: [...this.state.todos, { title: this.state.newTodo, done: false }],
+      todos: [
+        ...this.state.todos,
+        { title: this.state.newTodo, completed: false },
+      ],
       newTodo: "",
     });
   };
 
   toggleTodo = (e, i) => {
     var newState = [...this.state.todos];
-    newState[i].done = !newState[i].done;
+    newState[i].completed = !newState[i].completed;
     this.setState({
       todos: newState,
+    });
+  };
+
+  deleteTodo = (index) => {
+    var todos = [...this.state.todos];
+    todos.splice(index, 1);
+    this.setState({
+      todos,
     });
   };
 
@@ -72,15 +85,28 @@ class App extends Component {
               <ListGroup.Item
                 key={index}
                 variant="primary"
-                className={todo.done ? "font-weight-bold p-0 checked" : "p-0"}
+                className={
+                  todo.completed ? "font-weight-bold p-0 checked" : "p-0"
+                }
               >
                 <input
                   type="checkbox"
                   className="m-3"
-                  defaultChecked={todo.done}
-                  onClick={(event) => this.toggleTodo(event, index)}
+                  checked={todo.completed}
+                  onChange={(event) => this.toggleTodo(event, index)}
                 />
                 {todo.title}
+                <FontAwesomeIcon
+                  icon={faTrashAlt}
+                  color="red"
+                  style={{
+                    cursor: "pointer",
+                    position: "absolute",
+                    right: 10,
+                    top: 15,
+                  }}
+                  onClick={() => this.deleteTodo(index)}
+                />
               </ListGroup.Item>
             ))}
           </ListGroup>
