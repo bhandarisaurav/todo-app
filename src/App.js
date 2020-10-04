@@ -36,7 +36,7 @@ class App extends Component {
     });
   };
 
-  toggleTodo = (e, i) => {
+  toggleTodo = (i) => {
     var newState = [...this.state.todos];
     newState[i].completed = !newState[i].completed;
     this.setState({
@@ -50,6 +50,26 @@ class App extends Component {
     this.setState({
       todos,
     });
+  };
+
+  completeAll = () => {
+    var todos = this.state.todos.map((todo) => {
+      return {
+        ...todo,
+        completed: true,
+      };
+    });
+
+    this.setState({
+      todos,
+    });
+  };
+
+  todosCount = (status) => {
+    if (status === "complete")
+      return this.state.todos.filter((todo) => todo.completed === true).length;
+    else if (status === "incomplete")
+      return this.state.todos.filter((todo) => todo.completed === false).length;
   };
 
   render() {
@@ -78,7 +98,25 @@ class App extends Component {
 
         <Jumbotron className="w-75 p-5 m-auto">
           <h3>
-            All Todos <Badge variant="primary">{this.state.todos.length}</Badge>
+            All Todos
+            <Badge variant="primary" className="mx-2">
+              Total = {this.state.todos.length}
+            </Badge>
+            <Badge variant="primary" className="mx-2">
+              {this.todosCount("complete")}{" "}
+              <span role="img" aria-label="Check">
+                ✔️
+              </span>
+            </Badge>
+            <Badge variant="primary">
+              {this.todosCount("incomplete")}{" "}
+              <span role="img" aria-label="hourglass">
+                ⌛
+              </span>
+            </Badge>
+            <Button variant="success" className="ml-3" onClick={null}>
+              Complete All
+            </Button>
           </h3>
           <ListGroup className="w-50">
             {this.state.todos.map((todo, index) => (
@@ -93,7 +131,8 @@ class App extends Component {
                   type="checkbox"
                   className="m-3"
                   checked={todo.completed}
-                  onChange={(event) => this.toggleTodo(event, index)}
+                  style={{ cursor: "pointer" }}
+                  onChange={() => this.toggleTodo(index)}
                 />
                 {todo.title}
                 <FontAwesomeIcon
